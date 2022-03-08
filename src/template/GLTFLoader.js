@@ -11,11 +11,17 @@
 var THREE = require("three");
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-// var modelUrl = "https://s1.meixiu.mobi/pc/fileUpload/sceneGarden.gltf";
-var modelUrl =
-  "https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb";
+var availableUrlModelList = [
+  "https://s1.meixiu.mobi/pc/fileUpload/sceneGarden.gltf",
+  "https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb",
+  //   "https://threejs.org/examples/models/gltf/SheenChair.glb",
+  //   "https://threejs.org/examples/models/gltf/LittlestTokyo.glb",
+  // "https://threejs.org/examples/models/gltf/Soldier.glb",
+  // "http://localhost:8081/examples/models/gltf/ferrari.glb",
+];
 
 var controls, mixer;
 
@@ -23,6 +29,10 @@ var canvas = document.createElement("canvas");
 var context = canvas.getContext("webgl2", { alpha: true });
 
 var loader = new GLTFLoader();
+// var dracoLoader = new DRACOLoader();
+// dracoLoader.setDecoderPath("../libs/draco/gltf");
+// loader.setDRACOLoader(dracoLoader);
+
 var clock = new THREE.Clock();
 /** 建立了场景、相机和渲染器 */
 var scene = new THREE.Scene();
@@ -49,17 +59,19 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.textureEncoding = THREE.sRGBEncoding;
 
 loader.load(
-  modelUrl,
+  availableUrlModelList[availableUrlModelList.length - 1],
   function (gltf) {
     console.log("glft", gltf);
     // 动画
-    mixer = new THREE.AnimationMixer(gltf.scene);
-
-    for (var i = 0; i < gltf.animations.length; i++) {
-      var action = mixer.clipAction(gltf.animations[i]);
-      action.stop();
+    if (gltf.animations.length) {
+      mixer = new THREE.AnimationMixer(gltf.scene);
+      const num = 3; // 默认播放第几个动画
+      for (var i = 0; i < gltf.animations.length; i++) {
+        var action = mixer.clipAction(gltf.animations[i]);
+        action.stop();
+      }
+      gltf.animations[num] && mixer.clipAction(gltf.animations[num]).play();
     }
-    mixer.clipAction(gltf.animations[10]).play();
 
     gltf.scene.traverse(function (child) {
       if (child.isMesh) {

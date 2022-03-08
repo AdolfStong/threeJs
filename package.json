@@ -1,5 +1,6 @@
 {
   "name": "threejs",
+  "sideEffects": false,
   "version": "1.0.0",
   "description": "three all object.  [官方文档](http://www.webgl3d.cn/threejs/docs/#manual/zh/introduction/Creating-a-scene)",
   "private": true,
@@ -26,7 +27,12 @@
     "three": "^0.138.2"
   },
   "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.6.0",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "path": "^0.12.7",
+    "style-loader": "^3.3.1",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"

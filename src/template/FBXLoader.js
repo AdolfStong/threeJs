@@ -10,15 +10,13 @@
  */
 var THREE = require("three");
 
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 var availableUrlModelList = [
-  "https://s1.meixiu.mobi/pc/fileUpload/sceneGarden.gltf",
-  "https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb",
-  "https://threejs.org/examples/models/gltf/SheenChair.glb",
-  "https://threejs.org/examples/models/gltf/LittlestTokyo.glb",
-  "https://threejs.org/examples/models/gltf/Soldier.glb",
+  "https://sbcode.net/extra_html/models/xbot.fbx",
+  "https://www.yanhuangxueyuan.com/threejs/examples/models/fbx/Samba%20Dancing.fbx",
+  "https://s1.meixiu.mobi/pc/fileUpload/1646045954792.fbx",
 ];
 
 var controls, mixer;
@@ -26,7 +24,7 @@ var controls, mixer;
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("webgl2", { alpha: true });
 
-var loader = new GLTFLoader();
+var loader = new FBXLoader();
 var clock = new THREE.Clock();
 /** 建立了场景、相机和渲染器 */
 var scene = new THREE.Scene();
@@ -36,9 +34,9 @@ var scene = new THREE.Scene();
  * 接下来的两个参数是近截面（near）和远截面（far）
  */
 var camera = new THREE.PerspectiveCamera(
-  75,
+  45,
   window.innerWidth / window.innerHeight,
-  0.1,
+  1,
   1000
 );
 camera.position.set(0, 0, 100);
@@ -52,22 +50,27 @@ renderer.outputEncoding = THREE.sRGBEncoding;
 // 这个不知道干嘛用的 反正我加上了
 renderer.textureEncoding = THREE.sRGBEncoding;
 
+function modelAnimation(model) {
+  // 动画
+  if (model.animations.length) {
+    mixer = new THREE.AnimationMixer(model);
+    console.log("mixer", mixer);
+    const num = 0; // 默认播放第几个动画
+    for (var i = 0; i < model.animations.length; i++) {
+      var action = mixer.clipAction(model.animations[i]);
+      action.stop();
+    }
+    model.animations[num] && mixer.clipAction(model.animations[num]).play();
+  }
+}
+
 loader.load(
   availableUrlModelList[availableUrlModelList.length - 1],
-  function (gltf) {
-    console.log("glft", gltf);
-    // 动画
-    if (gltf.animations.length) {
-      mixer = new THREE.AnimationMixer(gltf.scene);
-      const num = 3; // 默认播放第几个动画
-      for (var i = 0; i < gltf.animations.length; i++) {
-        var action = mixer.clipAction(gltf.animations[i]);
-        action.stop();
-      }
-      gltf.animations[num] && mixer.clipAction(gltf.animations[num]).play();
-    }
+  function (model) {
+    console.log("model", model);
 
-    gltf.scene.traverse(function (child) {
+    modelAnimation(model);
+    model.traverse(function (child) {
       if (child.isMesh) {
         child.frustumCulled = false;
         //模型阴影
@@ -77,8 +80,10 @@ loader.load(
         child.material.emissiveMap = child.material.map;
       }
     });
-    setModelPosition(gltf.scene);
-    scene.add(gltf.scene);
+    setModelPosition(model);
+    scene.add(model);
+
+    model.scale.setScalar(0.4);
   },
   undefined,
   function (error) {
@@ -143,7 +148,7 @@ function setModelPosition(group) {
   // 计算一个层级模型对应包围盒的几何体中心在世界坐标中的位置
   var center = new THREE.Vector3();
   box3.getCenter(center);
-  // console.log('查看几何体中心坐标', center);
+  console.log("查看几何体中心坐标", center);
 
   // 重新设置模型的位置，使之居中。
   group.position.x = group.position.x - center.x;
