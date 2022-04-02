@@ -17,6 +17,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 var availableUrlModelList = [
   "https://s1.meixiu.mobi/pc/fileUpload/sceneGarden.gltf",
   "https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb",
+  "https://s1.meixiu.mobi/pc/fileUpload/robot.glb",
   //   "https://threejs.org/examples/models/gltf/SheenChair.glb",
   //   "https://threejs.org/examples/models/gltf/LittlestTokyo.glb",
   // "https://threejs.org/examples/models/gltf/Soldier.glb",
@@ -55,7 +56,6 @@ var renderer = new THREE.WebGLRenderer({ canvas, context });
 renderer.setSize(window.innerWidth, window.innerHeight);
 // three.js 的色彩空间渲染方式  【重要】
 renderer.outputEncoding = THREE.sRGBEncoding;
-// 这个不知道干嘛用的 反正我加上了
 renderer.textureEncoding = THREE.sRGBEncoding;
 
 loader.load(
@@ -65,7 +65,7 @@ loader.load(
     // 动画
     if (gltf.animations.length) {
       mixer = new THREE.AnimationMixer(gltf.scene);
-      const num = 3; // 默认播放第几个动画
+      const num = 0; // 默认播放第几个动画
       for (var i = 0; i < gltf.animations.length; i++) {
         var action = mixer.clipAction(gltf.animations[i]);
         action.stop();

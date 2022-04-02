@@ -10,7 +10,7 @@
  */
 require("./template/GLTFLoader");
 // require("./template/FBXLoader");
-import "./css/index.css";
+// import "./css/index.css";
 
 /** webpack测试 */
 import { cube } from "./math.js";
